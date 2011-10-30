@@ -14,7 +14,7 @@ def vir_env():
 def heroku_setup():
     dev_tools()
     virtualenv_setup()
-    celery()
+    virtualenv()
 
 def dev_tools():
     sudo( "sudo apt-get -y install python-pip" )
@@ -23,7 +23,9 @@ def dev_tools():
     sudo( "sudo pip install virtualenv" )
     sudo( "sudo pip install -vv virtualenvwrapper" )
     sudo( "sudo apt-get -y install libpq-dev python-dev" )
+    sudo( "sudo apt-get -y install postgresql" )
     sudo( "sudo gem install heroku" )
+    sudo( "sudo gem install foreman" )
 
 # Creating a new heroku virtual environment
 #def VE_creation():
@@ -49,9 +51,14 @@ def virtualenv_setup():
 
     run("source .bashrc .bash_profile")
 
-def celery():
-    with prefix('source bin/activate'):
-        run('pip install django-celery django-kombu')
+def virtualenv():
+    with cd('Projects/heroku'):
+        run("echo Django==1.3 > requirements.txt")
+        run("echo psycopg2==2.4.2 >> requirements.txt")
+        run('virtualenv --no-site-packages .')
+        with prefix('source bin/activate'):
+            run('pip install -r requirements.txt')
+            #run('pip install django-celery django-kombu')
 
 # Install the dev env requirements from custom script
 #def mysql_install():
